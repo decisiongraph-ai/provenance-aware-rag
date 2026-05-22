@@ -44,8 +44,8 @@ class IngestRequest(BaseModel):
     source_name: str
     author: str = ""
     url: str = ""
-    document_type: str = "general"
-    reliability: str = "unknown"
+    document_type: DocumentType = DocumentType.GENERAL
+    reliability: SourceReliability = SourceReliability.UNKNOWN
     valid_from: datetime | None = None
     valid_until: datetime | None = None
     chunk_size: int = Field(default=500, gt=0)
@@ -82,17 +82,14 @@ def health() -> dict[str, str]:
 
 @app.post("/ingest", response_model=IngestResponse, status_code=status.HTTP_201_CREATED)
 def ingest_document(req: IngestRequest) -> IngestResponse:
-    doc_type = DocumentType(req.document_type)
-    reliability = SourceReliability(req.reliability)
-
     doc = store.ingest(
         title=req.title,
         content=req.content,
         source_name=req.source_name,
         author=req.author,
         url=req.url,
-        document_type=doc_type,
-        reliability=reliability,
+        document_type=req.document_type,
+        reliability=req.reliability,
         valid_from=req.valid_from,
         valid_until=req.valid_until,
         chunk_size=req.chunk_size,

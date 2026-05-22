@@ -78,10 +78,15 @@ class RetrievalEngine:
                 scores[idx]["tfidf"] = float(score)
 
         combined: list[tuple[int, float]] = []
+        active_weight_sum = (
+            (self._bm25_weight if "bm25" in methods else 0.0)
+            + (self._tfidf_weight if "tfidf" in methods else 0.0)
+        ) or 1.0
         for idx, method_scores in scores.items():
             bm25_s = method_scores.get("bm25", 0.0)
             tfidf_s = method_scores.get("tfidf", 0.0)
-            final = self._bm25_weight * bm25_s + self._tfidf_weight * tfidf_s
+            raw = self._bm25_weight * bm25_s + self._tfidf_weight * tfidf_s
+            final = raw / active_weight_sum
             combined.append((idx, final))
 
         combined.sort(key=lambda x: x[1], reverse=True)
