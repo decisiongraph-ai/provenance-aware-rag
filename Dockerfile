@@ -17,9 +17,9 @@ WORKDIR /app
 
 COPY --from=builder /install /usr/local
 
-COPY src/ ./src/
-
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+COPY --chown=appuser:appgroup src/ ./src/
 USER appuser
 
 EXPOSE 8000
