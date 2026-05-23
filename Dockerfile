@@ -3,7 +3,7 @@ FROM python:3.11-alpine3.21@sha256:cc89153ee2e125296614f6a032cb473e2bc2c0203cbe2
 
 WORKDIR /build
 
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc g++ musl-dev gfortran openblas-dev
 
 COPY pyproject.toml README.md ./
 COPY src/ ./src/
@@ -14,6 +14,8 @@ RUN pip install --no-cache-dir --prefix=/install .
 FROM python:3.11-alpine3.21@sha256:cc89153ee2e125296614f6a032cb473e2bc2c0203cbe2305c917ece8866e5b01
 
 WORKDIR /app
+
+RUN apk add --no-cache libstdc++ openblas
 
 COPY --from=builder /install /usr/local
 
