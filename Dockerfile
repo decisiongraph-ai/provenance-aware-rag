@@ -5,7 +5,7 @@ WORKDIR /build
 
 RUN apk add --no-cache gcc musl-dev
 
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
 RUN pip install --no-cache-dir --prefix=/install .
